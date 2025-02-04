@@ -4,23 +4,32 @@
 This project models the [Transfermarket dataset](https://www.kaggle.com/datasets/davidcariboo/player-scores) as a star schema and then implements the model on HDFS in CSV, Avro and Parquet formats using different compression algorithms and compares between formats in terms of size, write speed and read speed.
 
 ## Data Modelling
+The first phase of the project focuses on data modeling. The dataset is modeled around two key business processes:
 
-The first part of this project is data modelling, the data models focuses on 2 main business processes: 
-1. **player appearances** in games with dimensions player, game, competition and club. 
-![alt text](<data model/appearances.png>)
-2. **player transfers** from club to another with dimensions player and club. 
-![alt text](<data model/transfers.png>)
+1. **Player Appearances**: Tracks player appearances in games, with dimensions including player, game, competition, and club.  
+   ![Player Appearances Data Model](data%20model/appearances.png)
 
-After designing the data model, Python was used to perform various transformations to make the data follow the star schema. Then final dimension and fact tables are stored as CSV files.
+2. **Player Transfers**: Captures player transfers between clubs, with dimensions including player and club.  
+   ![Player Transfers Data Model](data%20model/transfers.png)
 
-## Converting to Parquet and AVRO
-- The model's CSV files are converted to parquet files using `pyarrow` Python library, the conversion was done multiple times using different compression algorithms, specifically: `snappy`, `gzip`, `brotli`. 
+Once the data model was designed, Python was used to perform the necessary transformations to align the data with the star schema. The final dimension and fact tables were stored as CSV files.
 
-- CSV files are also converted to AVRO using `fastavro` Python library, the conversion was also done multiple times using different compression algorithms, specifically: `snappy`, `deflate`, `zstandard`.
+---
 
-## Uploading to HDFS 
-- All files were uploaded to an HDFS cluster with that was setup using `docker-compose`.
-- Python's `hdfs` library was used to interact with the HDFS cluster through Python.
+## Converting to Parquet and Avro
+
+- **Parquet Conversion**: The CSV files were converted to Parquet format using the `pyarrow` Python library. The conversion was repeated multiple times, each time applying a different compression algorithm: `snappy`, `gzip`, and `brotli`. This allowed for a comprehensive comparison of the impact of compression on file size and performance.
+
+- **Avro Conversion**: Similarly, the CSV files were converted to Avro format using the `fastavro` Python library. The conversion was performed with three compression algorithms: `snappy`, `deflate`, and `zstandard`. This step ensured a thorough evaluation of Avro's efficiency under different compression settings.
+
+---
+
+## Uploading to HDFS
+
+- All files—CSV, Parquet, and Avro—were uploaded to an HDFS cluster. The cluster was set up using `docker-compose`, ensuring a consistent and reproducible environment for testing.
+
+- The Python script interacted with the HDFS cluster using the `hdfs` library. By running the script as a Docker container, it operated on the same network as the HDFS cluster, enabling efficient and reliable communication between the script and the cluster.
+
 
 ## Comparing sizes
 This table compares sizes for various data formats stored in HDFS. The actual size represents the size of the data as stored in HDFS, excluding replication. **CSV** files are the largest because they are uncompressed. **Parquet** files are smaller than CSV 
