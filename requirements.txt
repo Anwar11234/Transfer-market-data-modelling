@@ -1,0 +1,6 @@
+pandas 
+hdfs 
+pyarrow 
+fastavro
+cramjam
+zstandard
