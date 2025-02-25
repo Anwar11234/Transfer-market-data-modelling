@@ -30,8 +30,28 @@ Once the data model was designed, Python was used to perform the necessary trans
 
 - The Python script interacted with the HDFS cluster using the `hdfs` library. By running the script as a Docker container, it operated on the same network as the HDFS cluster, enabling efficient and reliable communication between the script and the cluster.
 
+## How to run?
+1. run this command to setup the HDFS cluster:
+ 
+ ```docker
+ docker compose up -d
+ ```
+    
+2. build the docker file for `main.py`:
+    
+ ```docker
+ docker build -t python-app .
+ ```
+    
+3. Run the `python-app` container in the same network as the HDFS cluster:
+    
+ ```docker
+ docker run --network=hadoop-net python-app
+ ```
 
 ## Comparing sizes
+To know how much space each file format takes, after running `main.py` open the terminal and run `docker exec -it namenode bash` to run an interactive terminal inside the namenode. Inside this terminal run `hdfs dfs -du -h path/to/file` to know what size this file takes. For example, to know the space that the csv files take run `hdfs dfs -du -h /user/data/csv`
+
 This table compares sizes for various data formats stored in HDFS. The actual size represents the size of the data as stored in HDFS, excluding replication. **CSV** files are the largest because they are uncompressed. **Parquet** files are smaller than CSV 
 while **Avro** files are smaller than CSV but larger than Parquet.
 
@@ -78,3 +98,4 @@ This table summarizes the read times for files in different formats and compress
 - **CSV** files have the slowest read time due to their lack of compression and row-based format.
 - **Parquet** files are the fastest to read, with **Brotli** compression being the most efficient.
 - **Avro** files are slower than Parquet but faster than CSV, with **Snappy** being the slowest among Avro compression types.
+
